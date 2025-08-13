@@ -20,7 +20,7 @@ jobs:
     environment: prod   # coloque OPENROUTER_API_KEY como secret no Environment "prod"
 
     env:
-      LABELS: "post, curiosidade, publicar"
+      LABELS: "post, publicar"
       TOPIC_POOL: "DevOps,Kubernetes,OKD,Keycloak,AWS,Terraform,Observabilidade,Dynatrace,Grafana,CI/CD,Segurança,Redis,Nginx,Traefik,PostgreSQL,MySQL,PHP,Node.js,Autoscaling,HPA,Cost Optimization"
       TONE: "Prático, direto, com curiosidade inicial e exemplo mínimo executável"
       MIN_WORDS: "220"
@@ -54,7 +54,7 @@ jobs:
           from openai import OpenAI
           from openai import APIStatusError
 
-          labels     = os.getenv("LABELS", "post, curiosidade, publicar")
+          labels     = os.getenv("LABELS", "post, publicar")
           topics     = [t.strip() for t in os.getenv("TOPIC_POOL","").split(",") if t.strip()]
           tone       = os.getenv("TONE", "Prático e direto")
           min_words  = int(os.getenv("MIN_WORDS","220"))
