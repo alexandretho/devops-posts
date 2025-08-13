@@ -1,0 +1,49 @@
+name: AI – Create Blog Issue
+
+on:
+  schedule:
+    # ⏰ Ajuste aqui: 14:13 UTC = 11:13 BRT. Ex.: toda terça.
+    - cron: "13 14 * * 2"
+  workflow_dispatch: {}  # permite rodar manualmente quando quiser
+
+jobs:
+  ai_issue:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+
+    env:
+      LABELS: "post, curiosidade, publicar"
+      TOPIC_POOL: "DevOps,Kubernetes,OKD,Keycloak,AWS,Terraform,Observabilidade,Dynatrace,Grafana,CI/CD,Segurança,Redis,Nginx,Traefik,PostgreSQL,MySQL,PHP,Node.js,Autoscaling,HPA,Cost Optimization"
+      TONE: "Prático, direto, com curiosidade inicial e exemplo mínimo executável"
+      MIN_WORDS: "220"
+      MAX_WORDS: "420"
+      SITE_NAME: "deployman.com.br"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install openai==1.35.13
+
+      - name: Generate issue with AI
+        id: gen
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_REPO: ${{ github.repository }}
+        run: |
+          python scripts/generate_issue.py
+
+      - name: Create Issue from file
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: ${{ steps.gen.outputs.title }}
+          content-filepath: ${{ steps.gen.outputs.file }}
+          labels: ${{ env.LABELS }}
