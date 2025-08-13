@@ -1,4 +1,4 @@
-name: AI – Create Blog Issue (OpenRouter)
+name: AI – Create Blog Issue (OpenRouter, auto-free-model)
 
 on:
   schedule:
@@ -26,9 +26,7 @@ jobs:
       MIN_WORDS: "220"
       MAX_WORDS: "420"
       SITE_NAME: "deployman.com.br"
-      SITE_URL: "https://deployman.com.br"   # opcional (referer)
-      MODEL_NAME: "meta-llama/llama-3.1-8b-instruct:free"
-      MAX_TOKENS: "700"   # limite explícito pra não estourar créditos
+      SITE_URL: "https://deployman.com.br"   # opcional (Referer ASCII)
 
     steps:
       - name: Checkout
@@ -44,7 +42,7 @@ jobs:
           pip install --disable-pip-version-check --no-cache-dir \
             "openai==1.35.13" "httpx==0.27.2"
 
-      - name: Generate issue with AI (OpenRouter)
+      - name: Generate issue with AI (auto-pick free model)
         id: gen
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -52,18 +50,20 @@ jobs:
         run: |
           python - <<'PY'
           import os, json, random, datetime, pathlib, re, sys
+          import httpx
           from openai import OpenAI
           from openai import APIStatusError
 
-          labels = os.getenv("LABELS", "post, curiosidade, publicar")
-          topics = [t.strip() for t in os.getenv("TOPIC_POOL","").split(",") if t.strip()]
-          tone = os.getenv("TONE", "Prático e direto")
-          min_words = int(os.getenv("MIN_WORDS","220"))
-          max_words = int(os.getenv("MAX_WORDS","420"))
-          site_name = os.getenv("SITE_NAME","deployman.com.br")
-          site_url = os.getenv("SITE_URL","https://example.com")
-          model_name = os.getenv("MODEL_NAME","meta-llama/llama-3.1-8b-instruct:free")
-          max_tokens = int(os.getenv("MAX_TOKENS","700"))
+          labels     = os.getenv("LABELS", "post, curiosidade, publicar")
+          topics     = [t.strip() for t in os.getenv("TOPIC_POOL","").split(",") if t.strip()]
+          tone       = os.getenv("TONE", "Prático e direto")
+          min_words  = int(os.getenv("MIN_WORDS","220"))
+          max_words  = int(os.getenv("MAX_WORDS","420"))
+          site_name  = os.getenv("SITE_NAME","deployman.com.br")
+          site_url   = os.getenv("SITE_URL","https://example.com")
+          api_key    = os.getenv("OPENROUTER_API_KEY")
+          if not api_key:
+            raise SystemExit("❌ OPENROUTER_API_KEY não definido no Environment 'prod'.")
 
           topic = random.choice(topics) if topics else "DevOps"
 
@@ -97,18 +97,47 @@ jobs:
           "body": string (markdown completo do post).
           """.strip()
 
-          api_key = os.getenv("OPENROUTER_API_KEY")
-          if not api_key:
-            raise SystemExit("❌ OPENROUTER_API_KEY não definido no Environment 'prod'.")
+          # Descobrir modelos disponíveis no OpenRouter
+          headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Accept": "application/json",
+          }
+          try:
+            r = httpx.get("https://openrouter.ai/api/v1/models", headers=headers, timeout=30)
+            r.raise_for_status()
+            data = r.json().get("data", [])
+          except Exception as e:
+            raise SystemExit(f"❌ Falha ao listar modelos do OpenRouter: {e}")
 
-          client = OpenAI(
-            base_url="https://openrouter.ai/api/v1",
-            api_key=api_key,
-          )
+          # Coletar modelos "grátis": id contém ':free' ou pricing 0
+          free_models = []
+          for m in data:
+            mid = m.get("id","")
+            pricing = m.get("pricing", {})
+            prompt_cost = pricing.get("prompt")
+            completion_cost = pricing.get("completion")
+            zero_pricing = (str(prompt_cost) in ("0","0.0", "0.00", "None", "none", "null") or prompt_cost == 0) and \
+                           (str(completion_cost) in ("0","0.0","0.00","None","none","null") or completion_cost == 0)
+            if ":free" in mid or zero_pricing:
+              free_models.append(mid)
+
+          # Ordem preferencial (se existirem)
+          preferred = [
+            # adicione aqui IDs que você prefere quando estiverem disponíveis
+          ]
+
+          # Lista final de tentativas: preferidos disponíveis + demais free
+          candidates = [m for m in preferred if m in free_models] + [m for m in free_models if m not in preferred]
+
+          if not candidates:
+            # Sem modelos grátis listados: usar openrouter/auto (pode consumir créditos)
+            candidates = ["openrouter/auto"]
+
+          client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key)
 
           extra_headers = {
-            "HTTP-Referer": site_url,                # ASCII apenas
-            "X-Title": f"{site_name} - AI Issue Bot" # ASCII apenas
+            "HTTP-Referer": site_url,                 # ASCII
+            "X-Title": f"{site_name} - AI Issue Bot", # ASCII
           }
 
           def call_model(model, max_toks):
@@ -123,24 +152,13 @@ jobs:
               extra_headers=extra_headers,
             )
 
-          # Fallbacks em caso de 402 (créditos) ou 429 (rate)
-          fallback_models = [
-            "meta-llama/llama-3.1-8b-instruct:free",
-            "meta-llama/llama-3.1-70b-instruct:free",
-            "qwen/qwen-2.5-7b-instruct:free",
-          ]
-          tried = set()
           last_err = None
-
-          for mtoks in [max_tokens, 600, 512, 400]:
-            for m in [model_name] + [fm for fm in fallback_models if fm != model_name]:
-              key = (m, mtoks)
-              if key in tried: 
-                continue
-              tried.add(key)
+          for mtoks in [700, 600, 512, 400]:
+            for m in candidates:
               try:
                 resp = call_model(m, mtoks)
                 content = resp.choices[0].message.content.strip()
+
                 # Parse JSON do modelo
                 def try_parse_json(s: str):
                   try:
@@ -150,31 +168,35 @@ jobs:
                     if mm:
                       return json.loads(mm.group(0))
                     raise
-                data = try_parse_json(content)
-                title = data.get("title", f"{topic} - Post")
-                body  = data.get("body", f"# {title}\n\n**Data:** {date_pt}\n\n(Conteúdo)")
+
+                obj = try_parse_json(content)
+                title = obj.get("title", f"{topic} - Post")
+                body  = obj.get("body", f"# {title}\n\n**Data:** {date_pt}\n\n(Conteúdo)")
                 if not body.lstrip().startswith("# "):
                   body = f"# {title}\n\n{body}"
+
                 out_dir = pathlib.Path("out"); out_dir.mkdir(parents=True, exist_ok=True)
                 out_file = out_dir / "issue.md"
                 out_file.write_text(body, encoding="utf-8")
+
                 with open(os.getenv("GITHUB_OUTPUT"), "a", encoding="utf-8") as fh:
                   fh.write(f"title={title}\n")
                   fh.write(f"file={str(out_file)}\n")
+
                 print(f"✅ Gerado: {title} -> {out_file} (modelo={m}, max_tokens={mtoks})")
                 sys.exit(0)
+
               except APIStatusError as e:
                 last_err = e
                 code = getattr(e, "status_code", None)
-                print(f"⚠️ Falha com modelo={m}, max_tokens={mtoks}. status={code}. Tentando fallback...")
+                print(f"⚠️ Falha com modelo={m}, max_tokens={mtoks}. status={code}. Tentando próximo...")
                 continue
               except Exception as e:
                 last_err = e
-                print(f"⚠️ Erro inesperado com modelo={m}, max_tokens={mtoks}: {e}")
+                print(f"⚠️ Erro com modelo={m}, max_tokens={mtoks}: {e}")
                 continue
 
           raise SystemExit(f"❌ Não foi possível gerar com os limites atuais. Último erro: {last_err}")
-
           PY
 
       - name: Create Issue from file
