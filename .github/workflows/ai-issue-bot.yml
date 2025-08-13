@@ -1,4 +1,4 @@
-name: AI – Create Blog Issue (safe)
+name: AI – Create Blog Issue (OpenRouter)
 
 on:
   schedule:
@@ -17,7 +17,8 @@ concurrency:
 jobs:
   ai_issue:
     runs-on: ubuntu-latest
-    environment: prod   # coloque OPENAI_API_KEY como secret do environment "prod"
+    # Use Environment "prod" e adicione OPENROUTER_API_KEY como secret
+    environment: prod
 
     env:
       LABELS: "post, curiosidade, publicar"
@@ -26,6 +27,8 @@ jobs:
       MIN_WORDS: "220"
       MAX_WORDS: "420"
       SITE_NAME: "deployman.com.br"
+      # Opcional: usado como Referer no OpenRouter (ajuda na telemetria/quotas)
+      SITE_URL: "https://deployman.com.br"
 
     steps:
       - name: Checkout
@@ -41,14 +44,10 @@ jobs:
           pip install --disable-pip-version-check --no-cache-dir \
             "openai==1.35.13" "httpx==0.27.2"
 
-      # - name: Clear proxy env (optional)
-      #   run: |
-      #     unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy
-
-      - name: Generate issue with AI (inline)
+      - name: Generate issue with AI (OpenRouter)
         id: gen
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GITHUB_REPO: ${{ github.repository }}
         run: |
           python - <<'PY'
@@ -61,9 +60,11 @@ jobs:
           min_words = int(os.getenv("MIN_WORDS","220"))
           max_words = int(os.getenv("MAX_WORDS","420"))
           site_name = os.getenv("SITE_NAME","deployman.com.br")
+          site_url = os.getenv("SITE_URL","https://example.com")
 
           topic = random.choice(topics) if topics else "DevOps"
 
+          # Data em America/Sao_Paulo (fallback UTC-3)
           try:
             from zoneinfo import ZoneInfo
             date_pt = datetime.datetime.now(ZoneInfo("America/Sao_Paulo")).strftime("%d/%m/%Y")
@@ -93,13 +94,27 @@ jobs:
           "body": string (markdown completo do post).
           """.strip()
 
-          api_key = os.getenv("OPENAI_API_KEY")
+          api_key = os.getenv("OPENROUTER_API_KEY")
           if not api_key:
-            raise SystemExit("❌ OPENAI_API_KEY não definido no Environment 'prod'.")
+            raise SystemExit("❌ OPENROUTER_API_KEY não definido no Environment 'prod'.")
 
-          client = OpenAI(api_key=api_key)
+          # Cliente OpenRouter (compatível com OpenAI SDK)
+          client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=api_key,
+            default_headers={
+              # recomendado pelo OpenRouter (opcional, mas bom ter)
+              "HTTP-Referer": site_url,
+              "X-Title": f"{site_name} – AI Issue Bot",
+            },
+          )
+
+          # Modelo: "openrouter/auto" escolhe um modelo bom/custo-eficiente
+          # Se quiser fixar, troque por ex.: "meta-llama/llama-3.1-70b-instruct:free"
+          model_name = "openrouter/auto"
+
           resp = client.chat.completions.create(
-              model="gpt-4o-mini",
+              model=model_name,
               messages=[
                   {"role":"system","content":system_prompt},
                   {"role":"user","content":user_prompt},
@@ -130,16 +145,3 @@ jobs:
           out_file.write_text(body, encoding="utf-8")
 
           gh_out = os.getenv("GITHUB_OUTPUT")
-          with open(gh_out, "a", encoding="utf-8") as fh:
-            fh.write(f"title={title}\n")
-            fh.write(f"file={str(out_file)}\n")
-
-          print(f"✅ Gerado: {title} -> {out_file}")
-          PY
-
-      - name: Create Issue from file
-        uses: peter-evans/create-issue-from-file@v5
-        with:
-          title: ${{ steps.gen.outputs.title }}
-          content-filepath: ${{ steps.gen.outputs.file }}
-          labels: ${{ env.LABELS }}
