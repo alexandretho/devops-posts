@@ -17,8 +17,7 @@ concurrency:
 jobs:
   ai_issue:
     runs-on: ubuntu-latest
-    # Use Environment "prod" e adicione OPENROUTER_API_KEY como secret
-    environment: prod
+    environment: prod   # coloque OPENROUTER_API_KEY como secret no Environment "prod"
 
     env:
       LABELS: "post, curiosidade, publicar"
@@ -27,8 +26,7 @@ jobs:
       MIN_WORDS: "220"
       MAX_WORDS: "420"
       SITE_NAME: "deployman.com.br"
-      # Opcional: usado como Referer no OpenRouter (ajuda na telemetria/quotas)
-      SITE_URL: "https://deployman.com.br"
+      SITE_URL: "https://deployman.com.br"   # opcional; ajuda na telemetria do OpenRouter
 
     steps:
       - name: Checkout
@@ -64,7 +62,7 @@ jobs:
 
           topic = random.choice(topics) if topics else "DevOps"
 
-          # Data em America/Sao_Paulo (fallback UTC-3)
+          # Data (America/Sao_Paulo); fallback UTC-3 se faltar tzdata
           try:
             from zoneinfo import ZoneInfo
             date_pt = datetime.datetime.now(ZoneInfo("America/Sao_Paulo")).strftime("%d/%m/%Y")
@@ -98,20 +96,19 @@ jobs:
           if not api_key:
             raise SystemExit("❌ OPENROUTER_API_KEY não definido no Environment 'prod'.")
 
-          # Cliente OpenRouter (compatível com OpenAI SDK)
+          # Cliente OpenRouter via OpenAI SDK
           client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
             api_key=api_key,
-            default_headers={
-              # recomendado pelo OpenRouter (opcional, mas bom ter)
-              "HTTP-Referer": site_url,
-              "X-Title": f"{site_name} – AI Issue Bot",
-            },
           )
 
-          # Modelo: "openrouter/auto" escolhe um modelo bom/custo-eficiente
-          # Se quiser fixar, troque por ex.: "meta-llama/llama-3.1-70b-instruct:free"
-          model_name = "openrouter/auto"
+          model_name = "openrouter/auto"  # ou fixe um modelo específico
+
+          # Headers DEVEM ser ASCII somente
+          extra_headers = {
+            "HTTP-Referer": site_url,                   # sem emojis
+            "X-Title": f"{site_name} - AI Issue Bot",   # hífen normal
+          }
 
           resp = client.chat.completions.create(
               model=model_name,
@@ -120,6 +117,7 @@ jobs:
                   {"role":"user","content":user_prompt},
               ],
               temperature=0.7,
+              extra_headers=extra_headers,
           )
           content = resp.choices[0].message.content.strip()
 
@@ -133,7 +131,7 @@ jobs:
               raise
 
           data = try_parse_json(content)
-          title = data.get("title", f"{topic} – Post")
+          title = data.get("title", f"{topic} – Post")  # título no corpo pode ter unicode
           body = data.get("body", f"# {title}\n\n**Data:** {date_pt}\n\n(Conteúdo)")
 
           if not body.lstrip().startswith("# "):
@@ -145,3 +143,16 @@ jobs:
           out_file.write_text(body, encoding="utf-8")
 
           gh_out = os.getenv("GITHUB_OUTPUT")
+          with open(gh_out, "a", encoding="utf-8") as fh:
+            fh.write(f"title={title}\n")
+            fh.write(f"file={str(out_file)}\n")
+
+          print(f"✅ Gerado: {title} -> {out_file}")
+          PY
+
+      - name: Create Issue from file
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: ${{ steps.gen.outputs.title }}
+          content-filepath: ${{ steps.gen.outputs.file }}
+          labels: ${{ env.LABELS }}
