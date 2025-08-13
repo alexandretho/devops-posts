@@ -48,7 +48,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_REPO: ${{ github.repository }}
         run: |
-          python scripts/generate_issue.py
+          python scripts/scripts/generate_issue.py
 
       - name: Create Issue from file
         uses: peter-evans/create-issue-from-file@v5
