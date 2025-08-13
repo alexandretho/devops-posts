@@ -2,8 +2,8 @@ name: AI – Create Blog Issue (safe)
 
 on:
   schedule:
-    # ⏰ ajuste para o seu horário/intervalo (UTC). Ex.: toda terça às 14:13 UTC (11:13 BRT)
-    - cron: "13 14 * * 2"
+    # 23:35 UTC = 20:35 BRT todos os dias
+    - cron: "35 23 * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -17,8 +17,7 @@ concurrency:
 jobs:
   ai_issue:
     runs-on: ubuntu-latest
-    # Use um Environment protegido (Settings > Environments) e coloque o OPENAI_API_KEY lá
-    environment: prod
+    environment: prod   # coloque OPENAI_API_KEY como secret do environment "prod"
 
     env:
       LABELS: "post, curiosidade, publicar"
@@ -39,16 +38,104 @@ jobs:
 
       - name: Install deps
         run: |
-          pip install --disable-pip-version-check --no-cache-dir openai==1.35.13
+          pip install --disable-pip-version-check --no-cache-dir \
+            "openai==1.35.13" "httpx==0.27.2"
 
-      - name: Generate issue with AI
+      # - name: Clear proxy env (optional)
+      #   run: |
+      #     unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy
+
+      - name: Generate issue with AI (inline)
         id: gen
         env:
-          # ⚠️ pega do Environment "prod"
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_REPO: ${{ github.repository }}
         run: |
-          python scripts/scripts/generate_issue.py
+          python - <<'PY'
+          import os, json, random, datetime, pathlib, re
+          from openai import OpenAI
+
+          labels = os.getenv("LABELS", "post, curiosidade, publicar")
+          topics = [t.strip() for t in os.getenv("TOPIC_POOL","").split(",") if t.strip()]
+          tone = os.getenv("TONE", "Prático e direto")
+          min_words = int(os.getenv("MIN_WORDS","220"))
+          max_words = int(os.getenv("MAX_WORDS","420"))
+          site_name = os.getenv("SITE_NAME","deployman.com.br")
+
+          topic = random.choice(topics) if topics else "DevOps"
+
+          try:
+            from zoneinfo import ZoneInfo
+            date_pt = datetime.datetime.now(ZoneInfo("America/Sao_Paulo")).strftime("%d/%m/%Y")
+          except Exception:
+            date_pt = (datetime.datetime.utcnow() - datetime.timedelta(hours=3)).strftime("%d/%m/%Y")
+
+          system_prompt = f"""
+          Você é um assistente que escreve posts curtos em Markdown para Issues de GitHub
+          que serão transformadas em páginas do site {site_name}. Você deve:
+          - Título forte em 1 linha (começando com emoji temático).
+          - Introdução curta (1–2 parágrafos) com curiosidade.
+          - 1 bloco de código executável/útil (bash, yaml, nginx, kubectl etc.) SEM quebrar fences.
+          - Fechar com 3–5 bullets "Pontos-chave".
+          - Nada de HTML; só Markdown.
+          - Tamanho entre {min_words} e {max_words} palavras.
+          - Tom: {tone}.
+          - Tópico base: {topic}.
+          - NÃO coloque labels/metadados no corpo.
+          - Idioma: pt-BR.
+          """.strip()
+
+          user_prompt = f"""
+          Gere um post para o tema: {topic}.
+          Inclua a data no corpo como **Data:** {date_pt}.
+          Retorne JSON com:
+          "title": string (sem markdown),
+          "body": string (markdown completo do post).
+          """.strip()
+
+          api_key = os.getenv("OPENAI_API_KEY")
+          if not api_key:
+            raise SystemExit("❌ OPENAI_API_KEY não definido no Environment 'prod'.")
+
+          client = OpenAI(api_key=api_key)
+          resp = client.chat.completions.create(
+              model="gpt-4o-mini",
+              messages=[
+                  {"role":"system","content":system_prompt},
+                  {"role":"user","content":user_prompt},
+              ],
+              temperature=0.7,
+          )
+          content = resp.choices[0].message.content.strip()
+
+          def try_parse_json(s: str):
+            try:
+              return json.loads(s)
+            except json.JSONDecodeError:
+              m = re.search(r"\{[\s\S]*\}", s)
+              if m:
+                return json.loads(m.group(0))
+              raise
+
+          data = try_parse_json(content)
+          title = data.get("title", f"{topic} – Post")
+          body = data.get("body", f"# {title}\n\n**Data:** {date_pt}\n\n(Conteúdo)")
+
+          if not body.lstrip().startswith("# "):
+            body = f"# {title}\n\n{body}"
+
+          out_dir = pathlib.Path("out")
+          out_dir.mkdir(parents=True, exist_ok=True)
+          out_file = out_dir / "issue.md"
+          out_file.write_text(body, encoding="utf-8")
+
+          gh_out = os.getenv("GITHUB_OUTPUT")
+          with open(gh_out, "a", encoding="utf-8") as fh:
+            fh.write(f"title={title}\n")
+            fh.write(f"file={str(out_file)}\n")
+
+          print(f"✅ Gerado: {title} -> {out_file}")
+          PY
 
       - name: Create Issue from file
         uses: peter-evans/create-issue-from-file@v5
