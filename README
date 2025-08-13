@@ -1,0 +1,50 @@
+# Deployman – Blog/Curiosidades sobre DevOps, Tecnologia e Dados
+
+Este repositório contém o código-fonte do site **[deployman.com.br](https://deployman.com.br)**, um blog estático hospedado no **GitHub Pages**.  
+O objetivo é compartilhar curiosidades, dicas e conteúdos sobre DevOps, tecnologia e dados, de forma simples e rápida.
+
+---
+
+## 📌 Objetivo
+Demonstrar como criar e manter um **site/blog estático** usando o **GitHub Pages**, sem a necessidade de servidores dedicados ou configurações complexas.  
+Utilizamos uma abordagem baseada em **Issues com Tags** para gerenciar e publicar conteúdos.
+
+---
+
+## 🚀 Como funciona
+
+### 1. Estrutura do site
+- O site é um **HTML/CSS/JS** estático, hospedado diretamente no **GitHub Pages**.
+- O código do site fica na branch `main` (ou `gh-pages`, caso prefira separar).
+- Não é necessário backend — o conteúdo é renderizado a partir de dados no próprio repositório.
+
+### 2. Publicações via Issues + Tags
+- Cada **Issue** criada no repositório representa um post.
+- Utilizamos **tags** (labels) para categorizar os posts (ex.: `#DevOps`, `#Cloud`, `#Segurança`).
+- Um script ou automação (por exemplo, via GitHub Actions) lê as Issues abertas com determinadas tags e gera o conteúdo para o site.
+- Isso permite publicar novos posts **diretamente pelo GitHub**, sem precisar editar arquivos HTML.
+
+---
+
+## 🛠️ Como criar seu próprio blog usando este modelo
+
+### Passo 1 – Criar o repositório
+1. Crie um novo repositório no GitHub.
+2. Adicione os arquivos HTML/CSS/JS do seu site.
+3. Configure o **GitHub Pages**:
+   - Vá em **Settings > Pages**.
+   - Escolha a branch (`main` ou `gh-pages`) e a pasta (`/root` ou `/docs`).
+   - Salve.
+
+### Passo 2 – Configurar publicações via Issues
+1. Defina o padrão de título e descrição para seus posts.
+2. Use **labels** para categorizar.
+3. Configure um script (Node.js, Python, etc.) ou GitHub Action para transformar Issues em HTML/Markdown.
+
+### Passo 3 – Personalizar
+- Altere cores, layout e fontes no CSS.
+- Adicione seções extras como "Sobre", "Contato" ou "Projetos".
+- Configure domínio próprio (opcional) pelo **DNS** do seu provedor, apontando para o GitHub Pages.
+
+---
+
