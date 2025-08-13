@@ -1,17 +1,24 @@
-name: AI – Create Blog Issue
+name: AI – Create Blog Issue (safe)
 
 on:
   schedule:
-    # ⏰ Ajuste aqui: 14:13 UTC = 11:13 BRT. Ex.: toda terça.
+    # ⏰ ajuste para o seu horário/intervalo (UTC). Ex.: toda terça às 14:13 UTC (11:13 BRT)
     - cron: "13 14 * * 2"
-  workflow_dispatch: {}  # permite rodar manualmente quando quiser
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: ai-issue-bot
+  cancel-in-progress: false
 
 jobs:
   ai_issue:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      issues: write
+    # Use um Environment protegido (Settings > Environments) e coloque o OPENAI_API_KEY lá
+    environment: prod
 
     env:
       LABELS: "post, curiosidade, publicar"
@@ -31,11 +38,13 @@ jobs:
           python-version: "3.11"
 
       - name: Install deps
-        run: pip install openai==1.35.13
+        run: |
+          pip install --disable-pip-version-check --no-cache-dir openai==1.35.13
 
       - name: Generate issue with AI
         id: gen
         env:
+          # ⚠️ pega do Environment "prod"
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_REPO: ${{ github.repository }}
         run: |
