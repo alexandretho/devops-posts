@@ -3,7 +3,7 @@ from textwrap import dedent
 from openai import OpenAI
 
 # Config
-labels = os.getenv("LABELS", "post, curiosidade, publicar")
+labels = os.getenv("LABELS", "post, publicar")
 topics = [t.strip() for t in os.getenv("TOPIC_POOL", "").split(",") if t.strip()]
 tone = os.getenv("TONE", "Prático e direto")
 min_words = int(os.getenv("MIN_WORDS", "220"))
