@@ -3,7 +3,8 @@ name: AI – Create Blog Issue (OpenRouter, auto-free-model)
 on:
   schedule:
     # 23:35 UTC = 20:35 BRT todos os dias
-    - cron: "45 23 * * *"
+    # A cada 4 horas
+    - cron: "0 */4 * * *"
   workflow_dispatch: {}
 
 permissions:
