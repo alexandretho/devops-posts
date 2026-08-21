@@ -1,469 +1,51 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>DevOps • Tecnologia • Dados • Sec — Journal Tech Futurista</title>
-    <meta name="description" content="Blog estático futurista sobre DevOps, Tecnologia, Dados e Segurança. Posts e curiosidades via GitHub Issues." />
-    <meta name="author" content="Você" />
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-
-
-    <!-- Canonical & Social -->
-    <link id="canonical-link" rel="canonical" href="https://OWNER.github.io/REPO/" />
-    <meta property="og:title" content="DevOps • Tecnologia • Dados • Sec — Journal" />
-    <meta property="og:description" content="Conteúdo de DevOps, tecnologia e curiosidades, alimentado por GitHub Issues." />
-    <meta id="og-image" property="og:image" content="https://opengraph.githubassets.com/1/OWNER/REPO" />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-
-    <!-- Fonts: Futurista + Leitura -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
-    <meta name="theme-color" content="#0a0f1f" />
-<script data-goatcounter="https://deployman.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Journal Tech Futurista",
-        "url": "https://OWNER.github.io/REPO/",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://OWNER.github.io/REPO/?q={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
-      }
-    </script>
-
-    <style>
-      :root {
-        /* Paleta Futurista (HSL) */
-        --bg-1: 222 45% 6%;       /* canvas base */
-        --bg-2: 222 50% 8%;
-        --bg-3: 220 60% 10%;
-        --primary: 210 90% 56%;   /* azul neon */
-        --primary-ghost: 210 90% 64%;
-        --accent: 190 90% 50%;    /* ciano */
-        --muted: 220 15% 65%;
-        --surface: 222 36% 14%;
-        --border: 220 24% 22%;
-        --card: 222 36% 12%;
-        --success: 160 80% 45%;
-        --radius: 14px;
-
-        /* Efeitos */
-        --glow: 0 0 40px hsla(var(--primary) / 0.35);
-        --inner-glow: inset 0 0 0 1px hsl(var(--border));
-        --ring: 0 0 0 2px hsl(var(--primary) / 0.4), 0 0 0 6px hsl(var(--primary) / 0.15);
-      }
-
-      /* Reset & Base */
-      * { box-sizing: border-box; }
-      html { scroll-behavior: smooth; }
-      body {
-        margin: 0;
-        color: hsl(210 30% 96%);
-        background: radial-gradient(1000px 600px at 10% -20%, hsl(var(--primary) / 0.12), transparent 60%),
-                    radial-gradient(900px 500px at 90% 10%, hsl(var(--accent) / 0.10), transparent 55%),
-                    linear-gradient(180deg, hsl(var(--bg-1)), hsl(var(--bg-2)) 40%, hsl(var(--bg-3)) 100%);
-        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-        min-height: 100dvh;
-      }
-      .container { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
-
-      /* Nav */
-      header.navbar {
-        position: sticky; top: 0; z-index: 50;
-        backdrop-filter: blur(10px);
-        background: linear-gradient(180deg, hsl(var(--bg-3) / 0.8), hsl(var(--bg-3) / 0.35));
-        border-bottom: 1px solid hsl(var(--border));
-      }
-      .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
-      .brand { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; }
-      .brand-mark {
-        width: 28px; height: 28px; border-radius: 8px;
-        background: radial-gradient(100% 100% at 30% 20%, hsl(var(--primary)), hsl(var(--accent)) 60%);
-        box-shadow: var(--glow);
-      }
-      .brand-name { font-family: Orbitron, Inter, sans-serif; font-weight: 700; letter-spacing: 0.06em; font-size: 14px; text-transform: uppercase; }
-      nav a {
-        color: hsl(210 20% 88%);
-        text-decoration: none; margin-left: 18px; font-weight: 500; font-size: 14px;
-        position: relative;
-      }
-      nav a::after { content: ""; position: absolute; left: 0; bottom: -6px; width: 100%; height: 2px; background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent))); transform: scaleX(0); transform-origin: right; transition: transform .25s ease; }
-      nav a:hover { color: white; }
-      nav a:hover::after { transform: scaleX(1); transform-origin: left; }
-
-      /* Hero */
-      .hero { position: relative; padding: 72px 0 40px; overflow: hidden; }
-      .hero-grid {
-        display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 32px; align-items: center;
-      }
-      .hero h1 { font-family: Orbitron, Inter, sans-serif; font-size: clamp(28px, 5vw, 48px); line-height: 1.1; margin: 0 0 14px; letter-spacing: 0.01em; }
-      .hero .badge {
-        display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px;
-        background: hsl(var(--card)); border: 1px solid hsl(var(--border)); color: hsl(210 25% 85%);
-        font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 12px;
-      }
-      .subtitle { color: hsl(210 15% 80%); font-size: clamp(14px, 2.2vw, 18px); max-width: 60ch; }
-
-      .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
-      .btn {
-        --_bg: hsl(var(--primary));
-        --_bg2: hsl(var(--accent));
-        display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-        padding: 12px 16px; border-radius: 999px; color: white; text-decoration: none; font-weight: 600;
-        background: linear-gradient(135deg, var(--_bg), var(--_bg2));
-        box-shadow: 0 6px 18px hsl(var(--primary) / 0.25), inset 0 0 0 1px hsl(var(--primary) / 0.5);
-        transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
-      }
-      .btn:hover { transform: translateY(-1px); filter: saturate(1.08); box-shadow: 0 10px 22px hsl(var(--primary) / 0.35), inset 0 0 0 1px hsl(var(--primary)); }
-      .btn.ghost {
-        background: linear-gradient(135deg, hsl(var(--surface)), hsl(var(--card)));
-        color: hsl(210 30% 96%);
-        box-shadow: 0 0 0 0 transparent, inset 0 0 0 1px hsl(var(--border));
-      }
-      .btn.ghost:hover { box-shadow: 0 0 0 0 transparent, inset 0 0 0 1px hsl(var(--primary)); }
-
-      /* Search / Filter bar */
-      .toolbar { position: sticky; top: 64px; z-index: 40; background: linear-gradient(180deg, hsl(var(--bg-3) / 0.95), hsl(var(--bg-3) / 0.65)); border-bottom: 1px solid hsl(var(--border)); backdrop-filter: blur(8px); }
-      .toolbar-inner { display: flex; gap: 12px; padding: 12px 0; }
-      .input, .select { flex: 1; min-width: 0; padding: 12px 14px; border-radius: 12px; color: white; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); outline: none; }
-      .input::placeholder { color: hsl(210 10% 70%); }
-      .select { max-width: 220px; }
-      .input:focus, .select:focus { box-shadow: var(--ring); border-color: transparent; }
-
-      /* Sections */
-      section { padding: 42px 0; }
-      section header h2 { font-family: Orbitron, Inter, sans-serif; margin: 0 0 14px; font-size: clamp(20px, 3.6vw, 28px); }
-      section header p { margin: 0 0 16px; color: hsl(210 15% 80%); }
-
-      /* Grid & Cards */
-      .grid { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      @media (max-width: 1024px) { .hero-grid { grid-template-columns: 1fr; } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .select { max-width: 180px; } }
-      @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } .toolbar-inner { flex-direction: column; } .select { max-width: 100%; } }
-
-      .card {
-        background: linear-gradient(180deg, hsl(var(--card)), hsl(var(--surface)));
-        border: 1px solid hsl(var(--border));
-        border-radius: var(--radius);
-        padding: 16px; position: relative; overflow: hidden; isolation: isolate;
-        transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
-      }
-      .card:hover { transform: translateY(-3px); box-shadow: var(--glow); border-color: hsl(var(--primary) / 0.6); }
-      .card .meta { display: flex; gap: 10px; align-items: center; color: hsl(210 14% 75%); font-size: 12px; margin-bottom: 8px; }
-      .card h3 { margin: 8px 0 8px; font-size: 18px; }
-      .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 10px; }
-      .tag { font-size: 11px; padding: 6px 8px; border-radius: 999px; background: hsl(var(--bg-2)); border: 1px solid hsl(var(--border)); color: hsl(210 20% 86%); }
-      .excerpt { color: hsl(210 15% 82%); font-size: 14px; line-height: 1.55; }
-      .card-actions { margin-top: 12px; display: flex; gap: 10px; }
-      .link { color: hsl(var(--primary)); text-decoration: none; font-weight: 600; }
-      .link:hover { text-decoration: underline; }
-
-      /* Sobre */
-      .about { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px; }
-      @media (max-width: 900px) { .about { grid-template-columns: 1fr; } }
-      .about p { color: hsl(210 15% 82%); line-height: 1.7; }
-      .stack { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
-      .stack-item { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 12px; padding: 10px 12px; }
-
-      /* Footer */
-      footer { border-top: 1px solid hsl(var(--border)); padding: 24px 0; color: hsl(210 15% 76%); font-size: 14px; }
-      footer a { color: hsl(var(--primary)); text-decoration: none; }
-      footer a:hover { text-decoration: underline; }
-
-      /* Signature interaction: pointer glow */
-      .pointer-glow { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
-      .pointer-glow::before {
-        content: ""; position: absolute; width: 360px; height: 360px; border-radius: 50%;
-        background: radial-gradient(closest-side, hsl(var(--primary) / 0.22), transparent);
-        transform: translate(-50%, -50%);
-        left: var(--px, -9999px); top: var(--py, -9999px);
-        filter: blur(16px);
-      }
-
-      /* Small helpers */
-      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-    </style>
-  </head>
-
-  <body>
-    <!-- Pointer glow -->
-    <div class="pointer-glow" aria-hidden="true"></div>
-
-    <header class="navbar">
-      <div class="container nav-inner">
-        <a href="#top" class="brand" aria-label="Início">
-          <span class="brand-mark" aria-hidden="true"></span>
-          <span class="brand-name">Data • Flux • Journal</span>
-        </a>
-        <nav aria-label="Navegação primária">
-          <a href="#posts">Posts</a>
-          <a href="#curiosidades">Curiosidades</a>
-          <a href="#sobre">Sobre</a>
-          <a href="#contato">Contato</a>
-        </nav>
-      </div>
-    </header>
-
-    <main id="top">
-      <section class="hero">
-        <div class="container hero-grid">
-          <div>
-            <span class="badge">Journal Futurista • Tech</span>
-            <h1>DevOps • Tecnologia • Sec</h1>
-            <p class="subtitle">Explorando práticas modernas de DevOps, observabilidade, automação e segurança — com posts e curiosidades rápidas, direto do GitHub.</p>
-          </div>
-          <div>
-            <article class="card" aria-label="Destaque do dia">
-              <div class="meta">Destaques • Atualizado em tempo real</div>
-              <h3>Publicação via Issues</h3>
-              <p class="excerpt">Todo conteúdo é gerenciado por Issues do GitHub. Publique um novo post ou curiosidade em segundos, sem CMS, e apareça aqui automaticamente.</p>
-              <div class="card-actions">
-             
-    <!--    <a id="btn-open-repo" class="link" target="_blank" rel="noopener" href="#">Abrir repositório</a> -->
-                  </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <div class="toolbar">
-        <div class="container toolbar-inner">
-          <label class="sr-only" for="q">Buscar</label>
-          <input id="q" class="input" type="search" placeholder="Buscar em título, corpo e labels…" />
-          <label class="sr-only" for="type">Tipo</label>
-          <select id="type" class="select" aria-label="Filtro de tipo">
-            <option value="all">Tudo</option>
-            <option value="post">Posts</option>
-            <option value="curiosidade">Curiosidades</option>
-          </select>
-        </div>
-      </div>
-
-      <section id="posts">
-        <div class="container">
-          <header>
-            <h2>Posts</h2>
-            <p>Artigos curtos e diretos ao ponto. Alimentados por Issues com label <code>post</code>.</p>
-          </header>
-          <div id="postsGrid" class="grid" role="list"></div>
-        </div>
-      </section>
-
-      <section id="curiosidades">
-        <div class="container">
-          <header>
-            <h2>Curiosidades</h2>
-            <p>Notas rápidas, links e insights. Alimentados por Issues com label <code>curiosidade</code>.</p>
-          </header>
-          <div id="curiosidadesGrid" class="grid" role="list"></div>
-        </div>
-      </section>
-
-      <section id="sobre">
-        <div class="container">
-          <header>
-            <h2>Sobre mim</h2>
-          </header>
-          <div class="about">
-            <div>
-              <p>
-              <strong>Alexandre Santos</strong> — DevOps Senior na <strong>DotGroup</strong>, focado em
-      <strong>Kubernetes/OKD4</strong>, provisionamento na <strong>AWS</strong>, observabilidade ponta-a-ponta
-      (<strong>Dynatrace</strong>, <strong>Grafana</strong>, <strong>ELK</strong> , <strong>NewRelic</strong>), infraestrutura como código (<strong>Terraform</strong>),
-      automações (<strong>n8n</strong>) e segurança aplicada ao ciclo de vida.
-      Experiência também com gerenciamento de identidades (<strong>Keycloak</strong>) e mensageria
-      (<strong>RabbitMQ</strong>, <strong>Amazon MQ</strong>).
-      Gosto de compartilhar práticas, atalhos e curiosidades que aceleram o dia a dia.
-              </p>
-              <p>
-                Este site é estático, rápido e 100% mantido via GitHub Issues — simples de publicar e fácil de evoluir.
-              </p>
-            </div>
-            <aside>
-              <div class="stack">
-                <div class="stack-item">DevOps • GitHub Actions</div>
-                <div class="stack-item">Kubernetes • OKD4</div>
-                <div class="stack-item">AWS (EKS, EC2, S3)</div>
-                <div class="stack-item">Observabilidade: Dynatrace, Grafana, Loki</div>
-                <div class="stack-item">Terraform • IaC</div>
-                <div class="stack-item">n8n • automações</div>
-                <div class="stack-item">Segurança • DevSecOps</div>
-                <div class="stack-item">Container • Helm</div>
-              </div>
-            </aside>
-          </div>
-        </div>
-      </section>
-
-      <section id="contato">
-        <div class="container">
-          <header>
-            <h2>Contato</h2>
-            <p>Fale comigo por e-mail ou abra uma issue de contato no repositório.</p>
-          </header>
-          <div class="hero-cta">
-            <a id="btn-mail" class="btn" href="#">Enviar e-mail</a>
-            <a id="btn-issue-contato" class="btn ghost" target="_blank" rel="noopener" href="#">Abrir issue de contato</a>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <div class="container">
-        <span id="footer-year"></span> • <a id="repo-link" target="_blank" rel="noopener" href="#">Repositório</a> • Feito com ♥ e GitHub Pages
-      </div>
-    </footer>
-
-    <script>
-      // ====== CONFIG RÁPIDA (edite aqui) ======
-      const OWNER = "alexandretho";       // <- substitua
-      const REPO = "devops-posts";         // <- substitua
-      const SITE_EMAIL = "alexandre.etho@gmail.com"; // <- substitua
-      // ========================================
-
-      const ISSUE_BASE = `https://github.com/${OWNER}/${REPO}/issues`;
-      const API_BASE = `https://api.github.com/repos/${OWNER}/${REPO}/issues`;
-
-      // SEO dynamic
-      (function seoDynamic() {
-        const canonical = document.getElementById('canonical-link');
-        const ogImg = document.getElementById('og-image');
-        const ghPages = `https://${OWNER}.github.io/${REPO}/`;
-        if (OWNER !== 'OWNER' && REPO !== 'REPO') {
-          canonical?.setAttribute('href', ghPages);
-          ogImg?.setAttribute('content', `https://opengraph.githubassets.com/1/${OWNER}/${REPO}`);
-        }
-      })();
-
-      // Pointer glow
-      document.addEventListener('pointermove', (e) => {
-        const glow = document.querySelector('.pointer-glow');
-        if (glow) {
-          glow.style.setProperty('--px', e.clientX + 'px');
-          glow.style.setProperty('--py', e.clientY + 'px');
-        }
-      }, { passive: true });
-
-      // Util
-      const stripMd = (s = "") => s
-        .replace(/```[\s\S]*?```/g, " ")
-        .replace(/`[^`]*`/g, " ")
-        .replace(/\!\[[^\]]*\]\([^\)]*\)/g, " ")
-        .replace(/\[[^\]]*\]\([^\)]*\)/g, "$1")
-        .replace(/[>#*_~`]/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-
-      const fmtDate = (iso) => new Date(iso).toLocaleDateString('pt-BR', { year: 'numeric', month: 'short', day: '2-digit' });
-
-      function newIssueUrl(kind) {
-        const isPost = kind === 'post';
-        const label = isPost ? 'post' : (kind === 'curiosidade' ? 'curiosidade' : 'contato');
-        const title = isPost ? 'Novo post: ' : (kind === 'curiosidade' ? 'Curiosidade: ' : 'Contato: ');
-        const body = isPost ?
-`## Resumo\n\n> Escreva aqui um resumo curto.\n\n## Conteúdo\n\n- Tópico 1\n- Tópico 2\n\n---\n\nReferências: \n` : (kind === 'curiosidade' ?
-`## Curiosidade\n\nDescreva rapidamente a curiosidade.\n\nFonte/Link: \n` :
-`## Assunto\n\nConte aqui seu objetivo.\n\n## Detalhes\n\n- Contexto:\n- Como posso ajudar:\n`);
-        const url = `${ISSUE_BASE}/new?title=${encodeURIComponent(title)}&labels=${encodeURIComponent(label)}&body=${encodeURIComponent(body)}`;
-        return url;
-      }
-
-      // Set CTA links
-      const elPost = document.getElementById('btn-new-post');
-      if (elPost) elPost.href = newIssueUrl('post');
-      const elCur = document.getElementById('btn-new-cur');
-      if (elCur) elCur.href = newIssueUrl('curiosidade');
-      const elContato = document.getElementById('btn-issue-contato');
-      if (elContato) elContato.href = newIssueUrl('contato');
-      const elMail = document.getElementById('btn-mail');
-      if (elMail) elMail.href = `mailto:${SITE_EMAIL}?subject=${encodeURIComponent('Contato via Journal')}`;
-      const elYear = document.getElementById('footer-year');
-      if (elYear) elYear.textContent = `${new Date().getFullYear()}`;
-      const elRepo = document.getElementById('repo-link');
-      if (elRepo) elRepo.href = `https://github.com/${OWNER}/${REPO}`;
-      const elOpenRepo = document.getElementById('btn-open-repo');
-      if (elOpenRepo) elOpenRepo.href = `https://github.com/${OWNER}/${REPO}`;
-
-      // Data state
-      let posts = [];
-      let curiosidades = [];
-
-      async function fetchIssuesByLabel(label) {
-        const url = `${API_BASE}?state=open&labels=${encodeURIComponent(label)}&per_page=100`;
-        const res = await fetch(url, { headers: { 'Accept': 'application/vnd.github+json' } });
-        if (!res.ok) throw new Error('Falha ao carregar ' + label);
-        const data = await res.json();
-        // Filtra PRs (issues que possuem pull_request)
-        return data.filter(i => !i.pull_request);
-      }
-
-      function renderCard(issue) {
-        const el = document.createElement('article');
-        el.className = 'card';
-        const labels = (issue.labels || []).map(l => typeof l === 'string' ? l : l.name).filter(Boolean);
-        const excerpt = stripMd(issue.body || '').slice(0, 220) + (issue.body && issue.body.length > 220 ? '…' : '');
-        el.innerHTML = `
-          <div class="meta">${fmtDate(issue.created_at)} • #${issue.number}</div>
-          <h3>${issue.title}</h3>
-          <div class="tags">${labels.map(t => `<span class="tag">${t}</span>`).join('')}</div>
-          <p class="excerpt">${excerpt}</p>
-          <div class="card-actions">
-            <a class="link" href="${issue.html_url}" target="_blank" rel="noopener">Ler no GitHub</a>
-          </div>
-        `;
-        return el;
-      }
-
-      function applyFilters() {
-        const q = document.getElementById('q').value.toLowerCase().trim();
-        const type = document.getElementById('type').value; // all | post | curiosidade
-        const match = (iss) => {
-          const text = `${iss.title} ${(iss.body || '')} ${(iss.labels || []).map(l => typeof l === 'string' ? l : l.name).join(' ')}`.toLowerCase();
-          return text.includes(q);
-        };
-
-        const postsGrid = document.getElementById('postsGrid');
-        const curGrid = document.getElementById('curiosidadesGrid');
-        postsGrid.innerHTML = '';
-        curGrid.innerHTML = '';
-
-        const showPosts = type === 'all' || type === 'post';
-        const showCur = type === 'all' || type === 'curiosidade';
-        document.getElementById('posts').style.display = showPosts ? '' : 'none';
-        document.getElementById('curiosidades').style.display = showCur ? '' : 'none';
-
-        if (showPosts) posts.filter(match).forEach(i => postsGrid.appendChild(renderCard(i)));
-        if (showCur) curiosidades.filter(match).forEach(i => curGrid.appendChild(renderCard(i)));
-      }
-
-      async function init() {
-        try {
-          const [p, c] = await Promise.all([
-            fetchIssuesByLabel('post').catch(() => []),
-            fetchIssuesByLabel('curiosidade').catch(() => [])
-          ]);
-          posts = p;
-          curiosidades = c;
-        } catch (e) {
-          console.warn('Aviso:', e);
-        } finally {
-          applyFilters();
-        }
-      }
-
-      document.getElementById('q').addEventListener('input', applyFilters);
-      document.getElementById('type').addEventListener('change', applyFilters);
-      init();
-    </script>
-  </body>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deployman — DevOps prático para ambientes reais</title>
+  <meta name="description" content="Guias, runbooks e anotações práticas sobre Kubernetes, Terraform, observabilidade, CI/CD, AWS e DevSecOps." />
+  <meta name="author" content="Alexandre Santos" />
+  <link rel="canonical" href="https://deployman.com.br/" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+  <meta property="og:title" content="Deployman — DevOps prático para ambientes reais" />
+  <meta property="og:description" content="Guias e runbooks de DevOps escritos a partir de problemas reais de operação." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://deployman.com.br/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#07111f" />
+  <script data-goatcounter="https://deployman.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebSite","name":"Deployman","url":"https://deployman.com.br/","author":{"@type":"Person","name":"Alexandre Santos"},"description":"DevOps prático para ambientes reais: Kubernetes, Terraform, observabilidade, CI/CD, AWS e DevSecOps."}
+  </script>
+  <style>
+    :root{--bg:#07111f;--bg2:#0b1728;--panel:#101e32;--panel2:#0d1a2c;--text:#eef6ff;--muted:#9fb2c8;--line:#223550;--brand:#45a6ff;--brand2:#44e2c3;--radius:18px;--shadow:0 20px 60px rgba(0,0,0,.35)}
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(900px 500px at 8% -5%,rgba(69,166,255,.18),transparent 60%),radial-gradient(700px 500px at 95% 10%,rgba(68,226,195,.14),transparent 60%),linear-gradient(180deg,var(--bg),var(--bg2));min-height:100vh}.container{width:min(1120px,calc(100% - 32px));margin:0 auto}.nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(14px);background:rgba(7,17,31,.72);border-bottom:1px solid rgba(255,255,255,.08)}.nav-inner{height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-weight:800;letter-spacing:.04em}.brand-mark{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 0 40px rgba(69,166,255,.35)}nav{display:flex;gap:16px;flex-wrap:wrap}nav a{text-decoration:none;color:var(--muted);font-size:14px;font-weight:600}nav a:hover{color:var(--text)}.hero{padding:76px 0 34px}.hero-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:28px;align-items:stretch}.eyebrow{color:var(--brand2);font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:800}h1{font-size:clamp(34px,6vw,64px);line-height:1.02;margin:14px 0;letter-spacing:-.04em}.subtitle{color:#c9d8e8;font-size:clamp(16px,2vw,20px);line-height:1.65;max-width:760px}.hero-actions,.card-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;text-decoration:none;padding:12px 16px;border-radius:999px;font-weight:800;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#03101c}.btn.ghost{background:rgba(255,255,255,.04);color:var(--text);border-color:var(--line)}.panel{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.11);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}.panel h2,.panel h3{margin-top:0}.note{color:var(--muted);line-height:1.65}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}.stat{background:rgba(0,0,0,.18);border:1px solid var(--line);border-radius:14px;padding:14px}.stat strong{display:block;font-size:24px;color:var(--brand2)}section{padding:36px 0}.section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:18px}.section-head h2{margin:0;font-size:clamp(24px,3vw,34px);letter-spacing:-.03em}.section-head p{margin:8px 0 0;color:var(--muted)}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.input,.select{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:12px 14px;outline:none}.input{flex:1 1 280px}.select{flex:0 0 230px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;min-height:280px}.card:hover{border-color:rgba(69,166,255,.65);transform:translateY(-2px);transition:.16s ease}.meta{color:var(--muted);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}.card h3{font-size:20px;line-height:1.25;margin:12px 0 8px}.card p{color:#c7d6e6;line-height:1.55;margin:0 0 12px}.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:10px}.tag{color:#dceaff;background:rgba(69,166,255,.11);border:1px solid rgba(69,166,255,.25);border-radius:999px;padding:5px 8px;font-size:12px}.article{display:none;padding-top:28px}.article.active{display:block}.article-layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:22px;align-items:start}.article-body{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:26px}.article-body h1{font-size:clamp(30px,5vw,52px)}.article-body h2{margin-top:34px;font-size:26px}.article-body p,.article-body li{color:#d7e4f1;line-height:1.82;font-size:16px}.article-body pre{overflow:auto;background:#050b13;border:1px solid #1d3048;border-radius:14px;padding:16px}.article-body code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#b9f7df}.article-body :not(pre)>code{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:2px 6px}.toc{position:sticky;top:84px}.toc a{display:block;color:var(--muted);text-decoration:none;margin:10px 0;font-size:14px}.toc a:hover{color:var(--text)}.about{display:grid;grid-template-columns:1fr 1fr;gap:16px}footer{border-top:1px solid rgba(255,255,255,.09);padding:28px 0;color:var(--muted);margin-top:36px}@media(max-width:900px){.hero-grid,.article-layout,.about{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.toc{position:static}}@media(max-width:640px){.grid{grid-template-columns:1fr}.nav-inner{height:auto;padding:14px 0;align-items:flex-start;flex-direction:column}nav{gap:10px}.select{flex:1 1 100%}}
+  </style>
+</head>
+<body>
+  <header class="nav"><div class="container nav-inner"><a class="brand" href="#home" aria-label="Deployman início"><span class="brand-mark"></span><span>Deployman</span></a><nav aria-label="Navegação principal"><a href="#posts">Artigos</a><a href="#series">Séries</a><a href="#sobre">Sobre</a><a href="https://github.com/alexandretho/devops-posts" target="_blank" rel="noopener">GitHub</a></nav></div></header>
+  <main id="home">
+    <section class="hero"><div class="container hero-grid"><div><div class="eyebrow">DevOps prático • runbooks • operação real</div><h1>DevOps prático para ambientes reais.</h1><p class="subtitle">Guias, runbooks e anotações sobre Kubernetes, Terraform, observabilidade, CI/CD, AWS e DevSecOps — escritos a partir de problemas que aparecem no dia a dia de operação.</p><div class="hero-actions"><a class="btn" href="#posts">Ler artigos</a><a class="btn ghost" href="#series">Ver séries</a></div></div><aside class="panel"><h2>Comece por aqui</h2><p class="note">O Deployman agora usa posts versionados em Markdown no próprio repositório. A ideia é trocar volume automático por curadoria técnica.</p><div class="stats"><div class="stat"><strong id="stat-posts">0</strong><span>artigos curados</span></div><div class="stat"><strong>5</strong><span>séries iniciais</span></div></div></aside></div></section>
+    <section id="posts"><div class="container"><div class="section-head"><div><h2>Artigos curados</h2><p>Menos post genérico, mais diagnóstico, comando útil e contexto operacional.</p></div></div><div class="toolbar"><input id="search" class="input" type="search" placeholder="Buscar por Kubernetes, Terraform, HPA, rollback..." /><select id="category" class="select" aria-label="Filtrar por categoria"><option value="all">Todas as categorias</option></select></div><div id="cards" class="grid" aria-live="polite"></div></div></section>
+    <section id="article" class="article"><div class="container article-layout"><article id="articleBody" class="article-body"></article><aside class="panel toc"><a href="#posts">← Voltar aos artigos</a><h3>Neste artigo</h3><div id="tocLinks"></div></aside></div></section>
+    <section id="series"><div class="container"><div class="section-head"><div><h2>Séries editoriais</h2><p>O caminho para transformar as antigas Issues em uma base técnica organizada.</p></div></div><div class="grid"><div class="card"><div class="meta">Série</div><h3>Kubernetes na prática</h3><p>HPA, requests/limits, troubleshooting de pods, ingress, rollout e operação em OKD/OpenShift.</p></div><div class="card"><div class="meta">Série</div><h3>Terraform sem magia</h3><p>State, drift, módulos, pipeline de plan/apply e cuidados antes de aplicar em produção.</p></div><div class="card"><div class="meta">Série</div><h3>Observabilidade real</h3><p>Logs, métricas, traces, alertas úteis e dashboards que ajudam em incidente.</p></div><div class="card"><div class="meta">Série</div><h3>CI/CD de verdade</h3><p>Build rastreável, secrets, aprovação, rollback e deploy sem susto.</p></div><div class="card"><div class="meta">Série</div><h3>Cloud & FinOps</h3><p>AWS, custo, S3, Spot, rightsizing e decisões que economizam sem quebrar ambiente.</p></div><div class="card"><div class="meta">Série</div><h3>DevSecOps aplicado</h3><p>Keycloak, secrets, TLS, permissões mínimas e segurança prática no ciclo de entrega.</p></div></div></div></section>
+    <section id="sobre"><div class="container about"><div class="panel"><h2>Sobre Alexandre Santos</h2><p class="note">DevOps focado em Kubernetes/OKD4, AWS, observabilidade, automação, infraestrutura como código e segurança aplicada. Este site é um laboratório público para transformar anotações e rascunhos em conteúdo técnico reutilizável.</p></div><div class="panel"><h2>Fluxo editorial</h2><p class="note">As antigas Issues automáticas viram base de pesquisa. Os novos artigos são reescritos, revisados e versionados como Markdown em <code>posts/</code>. A prioridade é qualidade, não volume.</p></div></div></section>
+  </main>
+  <footer><div class="container">© <span id="year"></span> Alexandre Santos • Deployman • Feito com GitHub Pages e Markdown versionado</div></footer>
+  <script>
+    const state={posts:[]}; const $=(s)=>document.querySelector(s);
+    function formatDate(iso){return new Date(iso+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}
+    function escapeHtml(s=''){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+    function slugify(s=''){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+    function stripFrontmatter(md=''){return md.replace(/^---[\s\S]*?---\s*/,'')}
+    function inlineMd(s=''){return escapeHtml(s).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')}
+    function renderMarkdown(md=''){md=stripFrontmatter(md).trim();const codeBlocks=[];md=md.replace(/```(\w+)?\n([\s\S]*?)```/g,(_,lang,code)=>{const i=codeBlocks.length;codeBlocks.push(`<pre><code class="language-${escapeHtml(lang||'text')}">${escapeHtml(code.trim())}</code></pre>`);return `\n@@CODE${i}@@\n`});let html='',inList=false;for(const raw of md.split(/\n/)){const line=raw.trim();if(!line){if(inList){html+='</ul>';inList=false}continue}if(line.startsWith('@@CODE')){if(inList){html+='</ul>';inList=false}html+=codeBlocks[Number(line.match(/@@CODE(\d+)@@/)[1])];continue}if(line.startsWith('# ')){if(inList){html+='</ul>';inList=false}html+=`<h1>${inlineMd(line.slice(2))}</h1>`;continue}if(line.startsWith('## ')){if(inList){html+='</ul>';inList=false}const text=line.slice(3);html+=`<h2 id="${slugify(text)}">${inlineMd(text)}</h2>`;continue}if(line.startsWith('### ')){if(inList){html+='</ul>';inList=false}const text=line.slice(4);html+=`<h3 id="${slugify(text)}">${inlineMd(text)}</h3>`;continue}if(/^- \[[ xX]\]/.test(line)||line.startsWith('- ')){if(!inList){html+='<ul>';inList=true}html+=`<li>${inlineMd(line.replace(/^- \[[ xX]\]\s*/,'').replace(/^-\s*/,''))}</li>`;continue}if(inList){html+='</ul>';inList=false}html+=`<p>${inlineMd(line)}</p>`}if(inList)html+='</ul>';return html}
+    function renderCards(){const q=$('#search').value.toLowerCase().trim();const cat=$('#category').value;const filtered=state.posts.filter(p=>{const text=`${p.title} ${p.description} ${p.category} ${(p.tags||[]).join(' ')}`.toLowerCase();return(!q||text.includes(q))&&(cat==='all'||p.category===cat)});$('#cards').innerHTML=filtered.map(p=>`<article class="card"><div class="meta">${escapeHtml(p.category)} • ${formatDate(p.date)} • ${escapeHtml(p.level||'')}</div><h3>${escapeHtml(p.title)}</h3><p>${escapeHtml(p.description)}</p><div class="tags">${(p.tags||[]).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('')}</div><div class="card-actions"><a class="btn ghost" href="#post=${encodeURIComponent(p.slug)}">Ler artigo</a></div></article>`).join('')||'<p class="note">Nenhum artigo encontrado.</p>'}
+    async function openPost(slug){const post=state.posts.find(p=>p.slug===slug);if(!post)return;const md=await fetch(post.file).then(r=>{if(!r.ok)throw new Error('Post não encontrado');return r.text()});$('#articleBody').innerHTML=renderMarkdown(md);const headings=[...$('#articleBody').querySelectorAll('h2')];$('#tocLinks').innerHTML=headings.map(h=>`<a href="#${h.id}">${escapeHtml(h.textContent)}</a>`).join('');$('#article').classList.add('active');$('#article').scrollIntoView({behavior:'smooth',block:'start'})}
+    function handleRoute(){const m=location.hash.match(/post=([^&]+)/);if(m)openPost(decodeURIComponent(m[1]));else $('#article').classList.remove('active')}
+    async function init(){$('#year').textContent=new Date().getFullYear();state.posts=await fetch('posts/manifest.json').then(r=>r.json());$('#stat-posts').textContent=state.posts.length;const cats=[...new Set(state.posts.map(p=>p.category))].sort();$('#category').innerHTML+=cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');$('#search').addEventListener('input',renderCards);$('#category').addEventListener('change',renderCards);window.addEventListener('hashchange',handleRoute);renderCards();handleRoute()}
+    init().catch(err=>{console.error(err);$('#cards').innerHTML='<p class="note">Não foi possível carregar os posts. Verifique posts/manifest.json.</p>'})
+  </script>
+</body>
 </html>
