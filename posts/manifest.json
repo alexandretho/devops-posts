@@ -1,0 +1,62 @@
+[
+  {
+    "slug": "hpa-kubernetes-nao-escala",
+    "title": "HPA no Kubernetes: por que seu pod não escala mesmo com CPU alta?",
+    "description": "Um runbook prático para diagnosticar HorizontalPodAutoscaler parado: metrics-server, requests, métricas e eventos.",
+    "category": "Kubernetes / OKD",
+    "tags": ["kubernetes", "hpa", "autoscaling", "troubleshooting"],
+    "level": "intermediário",
+    "date": "2026-08-20",
+    "source_issue": 234,
+    "featured": true,
+    "file": "posts/hpa-kubernetes-nao-escala.md"
+  },
+  {
+    "slug": "requests-limits-kubernetes-sem-chute",
+    "title": "Como dimensionar requests e limits no Kubernetes sem chutar valores",
+    "description": "Um guia direto para ajustar CPU/memória com dados reais, reduzir desperdício e evitar throttling inesperado.",
+    "category": "Kubernetes / OKD",
+    "tags": ["kubernetes", "requests", "limits", "custos"],
+    "level": "intermediário",
+    "date": "2026-08-20",
+    "source_issue": 239,
+    "featured": true,
+    "file": "posts/requests-limits-kubernetes-sem-chute.md"
+  },
+  {
+    "slug": "terraform-plan-apply-state-drift",
+    "title": "Terraform na prática: plan, apply, state e drift sem magia",
+    "description": "O que realmente importa antes de levar Terraform para produção: state remoto, revisão de plano e detecção de drift.",
+    "category": "Terraform / IaC",
+    "tags": ["terraform", "iac", "state", "drift"],
+    "level": "iniciante/intermediário",
+    "date": "2026-08-20",
+    "source_issue": 221,
+    "featured": true,
+    "file": "posts/terraform-plan-apply-state-drift.md"
+  },
+  {
+    "slug": "pipeline-cicd-seguro-rollback",
+    "title": "Pipeline CI/CD seguro: build, teste, rollback e deploy sem susto",
+    "description": "Como pensar uma pipeline rastreável de verdade: imagem por SHA, aprovação, secrets e rollback simples.",
+    "category": "CI/CD / GitHub Actions",
+    "tags": ["ci-cd", "github-actions", "docker", "rollback"],
+    "level": "intermediário",
+    "date": "2026-08-20",
+    "source_issue": 233,
+    "featured": true,
+    "file": "posts/pipeline-cicd-seguro-rollback.md"
+  },
+  {
+    "slug": "observabilidade-pratica-logs-metricas-traces",
+    "title": "Observabilidade na prática: logs, métricas e traces sem dashboard bonito inútil",
+    "description": "Um guia operacional para transformar sinais em diagnóstico, e não só acumular painel bonito no Grafana.",
+    "category": "Observabilidade",
+    "tags": ["observabilidade", "logs", "metricas", "traces"],
+    "level": "intermediário",
+    "date": "2026-08-20",
+    "source_issue": 142,
+    "featured": true,
+    "file": "posts/observabilidade-pratica-logs-metricas-traces.md"
+  }
+]
