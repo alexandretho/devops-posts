@@ -11,15 +11,26 @@
     "file": "posts/hermes-agente-ia-operacao-real.md"
   },
   {
-    "slug": "devops-senior-okd4-pipelines-ia",
-    "title": "DevOps Sênior em ambiente OKD4: atualização de cluster, pipelines e automação com IA",
-    "description": "Raciocínio operacional por trás de upgrades de OKD4, pipelines rastreáveis, observabilidade com Dynatrace/ELK e integração com AWS Bedrock em ambiente enterprise.",
-    "category": "DevOps / SRE / Operação",
-    "tags": ["okd", "kubernetes", "openshift", "dynatrace", "elk", "aws", "bedrock", "ci-cd"],
+    "slug": "pipeline-github-actions-aws-ecr-okd4",
+    "title": "Pipeline no GitHub Actions com AWS: testes, build, ECR e deploy em OKD4",
+    "description": "Como estruturo pipelines reais com GitHub Actions, AWS CodeBuild, ECR, scan de vulnerabilidade, OIDC e deploy em OKD4 — com aprovação manual para produção.",
+    "category": "CI/CD / GitHub Actions / AWS",
+    "tags": ["github-actions", "aws", "ecr", "okd", "ci-cd", "oidc", "trivy"],
     "level": "avançado",
     "date": "2026-09-25",
     "featured": true,
-    "file": "posts/devops-senior-okd4-pipelines-ia.md"
+    "file": "posts/pipeline-github-actions-aws-ecr-okd4.md"
+  },
+  {
+    "slug": "atualizacao-cluster-okd4-producao",
+    "title": "Atualização de cluster OKD4 em produção: o que ninguém conta antes de você começar",
+    "description": "Checklist completo pré-upgrade, monitoramento do CVO e MachineConfigPool, diagnóstico de operador travado e verificação pós-atualização em ambiente enterprise.",
+    "category": "Kubernetes / OKD",
+    "tags": ["okd", "openshift", "upgrade", "mcp", "cvo", "etcd", "troubleshooting"],
+    "level": "avançado",
+    "date": "2026-09-25",
+    "featured": true,
+    "file": "posts/atualizacao-cluster-okd4-producao.md"
   },
   {
     "slug": "hpa-kubernetes-nao-escala",
