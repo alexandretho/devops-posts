@@ -1,5 +1,27 @@
 [
   {
+    "slug": "hermes-agente-ia-operacao-real",
+    "title": "Hermes: o agente de IA que opera minha infraestrutura enquanto eu durmo",
+    "description": "Como uso um agente de IA com acesso real a terminal, Docker, GitHub e APIs para automatizar operação, desenvolvimento e monitoramento — e o que aprendi operando isso.",
+    "category": "IA Aplicada / Automação",
+    "tags": ["ia", "agente", "automacao", "devops", "llm"],
+    "level": "intermediário",
+    "date": "2026-09-25",
+    "featured": true,
+    "file": "posts/hermes-agente-ia-operacao-real.md"
+  },
+  {
+    "slug": "devops-senior-okd4-pipelines-ia",
+    "title": "DevOps Sênior em ambiente OKD4: atualização de cluster, pipelines e automação com IA",
+    "description": "Raciocínio operacional por trás de upgrades de OKD4, pipelines rastreáveis, observabilidade com Dynatrace/ELK e integração com AWS Bedrock em ambiente enterprise.",
+    "category": "DevOps / SRE / Operação",
+    "tags": ["okd", "kubernetes", "openshift", "dynatrace", "elk", "aws", "bedrock", "ci-cd"],
+    "level": "avançado",
+    "date": "2026-09-25",
+    "featured": true,
+    "file": "posts/devops-senior-okd4-pipelines-ia.md"
+  },
+  {
     "slug": "hpa-kubernetes-nao-escala",
     "title": "HPA no Kubernetes: por que seu pod não escala mesmo com CPU alta?",
     "description": "Um runbook prático para diagnosticar HorizontalPodAutoscaler parado: metrics-server, requests, métricas e eventos.",
